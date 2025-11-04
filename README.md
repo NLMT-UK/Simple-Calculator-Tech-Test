@@ -118,6 +118,13 @@ pip install -r requirements.txt
 
 This ensures the test environment is reproducible on any system.
 
+### Environment Variables
+| Variable      | Default Value                                                      | Purpose                                                   |
+|---------------|--------------------------------------------------------------------|-----------------------------------------------------------|
+| BASE_URL      | https://testsheepnz.github.io/BasicCalculator.html                 | Target calculator site URL                                |
+| BROWSER       | chrome                                                             | Browser under test (`chrome` or `firefox`)                |
+| HEADLESS      | true                                                               | Runs browser in headless mode                             |
+| EDGE_BUILDS   | 0                                                                  | Comma-separated list of builds to run edge-case tests on  |
 
 ### Execution
 
@@ -178,15 +185,24 @@ This approach allows:
 
 - Expanding coverage without modifying test logic  
 - Parallel execution for efficiency  
-- Clear, traceable data-to-test relationships  
+- Clear, traceable data-to-test relationships
+
+The arithmetic test data has been expanded to include float-based operations (e.g. 2.5 + 3.2, 1.5 * 2.0) to verify decimal handling and rounding accuracy across calculator builds. 
 
 ## Test Types and Coverage
 
-| Test Type               | Description                                                               | Location                                |
-|-------------------------|---------------------------------------------------------------------------|-----------------------------------------|
-| Regression (Arithmetic) | Verifies all operations across builds using multiple numeric combinations | tests/test_data_driven_arithmetic.py    |
-| Validation (Edge Cases) | Handles divide-by-zero, invalid input, and large number cases             | tests/test_edge_cases_and_validation.py |
-| Smoke                   | Basic functional checks for working builds                                | tests/test_smoke_calculator.py          |
+| Test Type               | Description                                                      | Location                                |
+|--------------------------|-----------------------------------------------------------------|-----------------------------------------|
+| Regression (Arithmetic)  | Verifies all operations across builds using numeric datasets    | tests/test_data_driven_arithmetic.py    |
+| Validation (Edge Cases)  | Validates input and float/edge cases across configurable builds | tests/test_edge_cases_and_validation.py |
+| Build Regression         | Checks integer and concatenation behaviour across builds        | tests/test_build_regression.py          |
+| Smoke                    | Basic load and calculation sanity tests                         | tests/test_smoke_calculator.py          |
+
+Edge-case tests previously ran only against Build 0 for performance.
+The framework now allows configurable multi-build execution using an environment variable:
+```ini
+EDGE_BUILDS=0,1,2,3,4,5,6,7,8,9 pytest -m validation
+```
 
 ## Defect Handling and Reporting Strategy
 
@@ -278,52 +294,64 @@ Example workflow snippet:
 name: CI
 
 on:
-push:
-branches: [ main ]
-pull_request:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
-tests:
-runs-on: ubuntu-latest
+  tests:
+    runs-on: ubuntu-latest
 
-steps:
+    steps:
       - name: Checkout repository
-uses: actions/checkout@v4
+        uses: actions/checkout@v4
 
       - name: Set up Python
-uses: actions/setup-python@v5
-with:
-python-version: '3.12'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
       - name: Install dependencies
-run: pip install -r requirements.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Run tests
-run: pytest -n 2 --maxfail=0 --alluredir=reports/allure-results
+      - name: Run tests (allow failures due to known-bad builds)
+        run: |
+          mkdir -p reports/allure-results
+          pytest -n 2 --maxfail=0 --alluredir=reports/allure-results
+        continue-on-error: true
 
       - name: Generate Allure report
-run: allure generate reports/allure-results -o reports/allure-report --clean
+        run: |
+          mkdir -p reports/allure-report
+          allure generate reports/allure-results -o reports/allure-report --clean
 
       - name: Upload Allure report as artifact
-uses: actions/upload-artifact@v4
-with:
-name: allure-report
-path: reports/allure-report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: reports/allure-report
 ```
+
+Because several calculator builds intentionally contain defects, test failures are expected.
+The workflow uses `continue-on-error: true` on the pytest step so the pipeline still completes and the Allure report is generated and uploaded, even when tests fail.
 
 This workflow installs dependencies, runs all tests, generates an Allure report, and uploads the output as an artifact.
 
 ## Scalability and Future Enhancements
 
-| Category                   | Enhancement                                     | Benefit                                             |
-|----------------------------|-------------------------------------------------|-----------------------------------------------------|
-| Browser Matrix             | Add support for Edge, Firefox, Safari           | Cross-browser confidence                            |
-| Dockerisation              | Containerise framework and browser              | Consistent environments                             |
-| Cloud Execution            | Integration with Selenium Grid or BrowserStack  | Scalable distributed testing                        |
-| Jira API Integration       | Automatically log failed/xfail tests as tickets | Streamlined defect tracking                         |
-| Test Data Expansion        | Extend JSON and CSV datasets                    | Greater coverage                                    |
-| Allure TestOps Integration | Centralise results and analytics                | Better historical insights                          |
-| Test Design                | Add BDD (pytest-bdd or behave) layer            | Improved readability for non-technical stakeholders |
+| Category                   | Enhancement                                                          | Benefit                                             |
+|----------------------------|----------------------------------------------------------------------|-----------------------------------------------------|
+| Browser Matrix             | Add support for Edge, Firefox, Safari                                | Cross-browser confidence                            |
+| Dockerisation              | Containerise framework and browser                                   | Consistent environments                             |
+| Cloud Execution            | Integration with Selenium Grid or BrowserStack                       | Scalable distributed testing                        |
+| Jira API Integration       | Automatically log failed/xfail tests as tickets                      | Streamlined defect tracking                         |
+| Test Data Expansion        | Extend JSON and CSV datasets                                         | Greater coverage                                    |
+| Allure TestOps Integration | Centralise results and analytics                                     | Better historical insights                          |
+| Test Design                | Add BDD (pytest-bdd or behave) layer                                 | Improved readability for non-technical stakeholders |
+| Environment Configuration  | Add automatic OS/browser dependency installation in run_all_tests.sh | Simplifies setup for Ubuntu/Linux users             | 
 
 ## Maintenance Guidelines
 
@@ -332,6 +360,7 @@ This workflow installs dependencies, runs all tests, generates an Allure report,
 - Clean `reports/allure-results` and `reports/screenshots` periodically.  
 - Keep local and CI environments aligned to avoid flakiness.  
 - Group future tests by purpose using clear pytest markers.
+- Keep test data in sync with application behaviour (e.g. remove scientific notation if the AUT returns plain decimals).
 
 ## BDD
 
@@ -344,13 +373,15 @@ If stakeholder-readable tests become a requirement, BDD tools such as `pytest-bd
 
 This framework demonstrates:
 
-- A modular Page Object architecture  
-- Strong data-driven testing principles  
-- Evidence-based reporting with Allure  
-- CI/CD integration and maintainability  
-- Clear defect tracking via xfail and visual artefacts  
+- A modular and maintainable Page Object Model architecture  
+- Comprehensive, data-driven test coverage across multiple calculator builds  
+- Evidence-based reporting with Allure, including screenshots and HTML captures  
+- CI/CD integration through GitHub Actions with stable parallel execution  
+- Configurable environment variables for flexible browser and build control  
+- Clear defect management via xfail markers and transparent reporting  
+- Cross-platform support (macOS, Windows, Ubuntu) with automated dependency handling  
 
-  It provides a solid foundation for scalable regression automation and transparent quality reporting.
+It provides a robust, scalable foundation for continuous regression testing and transparent quality reporting, ready for extension into full CI pipelines and integration with defect tracking systems such as Jira or Allure TestOps.
 
 ---
 
