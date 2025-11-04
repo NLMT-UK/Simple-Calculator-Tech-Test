@@ -7,3 +7,11 @@ build,op,a,b,integer_only,expected,notes
 0,3,7,2,false,3.5,non-terminating decimal displays
 0,4,foo,bar,false,foobar,concatenate non-numeric
 0,0,abc,2,false,Error|Please enter a number,input validation message varies
+0,0,0.1,0.2,false,0.3,float addition precision
+0,1,5.5,2.2,false,3.3,float subtraction precision
+0,2,1.1,2.2,false,2.42,float multiplication precision
+0,3,1.0,3.0,false,0.3333,float division precision
+0,3,5.5,0,false,Divide by 0 error,divide by zero with float
+0,3,0.0001,0.0001,false,1,small float equality
+0,3,1e-6,1e-3,false,0.001,scientific notation handling
+0,2,9999.99,0.001,false,9.99999,large * small float multiplication

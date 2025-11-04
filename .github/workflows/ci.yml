@@ -29,8 +29,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # optional: install Chrome + chromedriver on ubuntu-latest
-      # if your runner image already has it, you can skip this
+      # Chrome for Selenium
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
 
@@ -41,9 +40,11 @@ jobs:
             -n 2 \
             --maxfail=0 \
             --alluredir=reports/allure-results
+        # AUT has intentionally broken builds – don't fail the whole CI
+        continue-on-error: true
 
-      # install allure CLI so results can be turned into HTML
       - name: Install Allure CLI
+        if: always()
         run: |
           sudo apt-get update
           sudo apt-get install -y default-jre
@@ -52,17 +53,20 @@ jobs:
           sudo ln -s /opt/allure-2.29.0/bin/allure /usr/bin/allure
 
       - name: Generate Allure HTML report
+        if: always()
         run: |
           mkdir -p reports/allure-report
           allure generate reports/allure-results -o reports/allure-report --clean
 
       - name: Upload Allure results (raw)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-results
           path: reports/allure-results
 
       - name: Upload Allure HTML report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
