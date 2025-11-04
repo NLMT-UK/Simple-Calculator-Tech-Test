@@ -110,7 +110,7 @@ This ensures the test environment is reproducible on any system.
 
 ### Page Object Model (POM)
 
-        All UI interactions are encapsulated within `src/pages/calculator_page.py`.
+All UI interactions are encapsulated within `src/pages/calculator_page.py`.
 
 The `CalculatorPage` class exposes methods such as:
 
@@ -126,7 +126,7 @@ This design isolates element locators and interaction logic from the tests thems
 
 ### Data-Driven Testing
 
-        Arithmetic test data is stored in `data/arithmetic_cases.json`, and validation cases in `data/edge_cases.csv`.
+Arithmetic test data is stored in `data/arithmetic_cases.json`, and validation cases in `data/edge_cases.csv`.
 Pytest dynamically parameterises tests from these files across all calculator builds (0–9).
 
 This approach allows:
@@ -153,7 +153,7 @@ These known issues are handled with **pytest xfail markers** to prevent false pi
 - Screenshots and HTML sources are attached automatically for traceability.  
 - Allure reports clearly indicate failed or expected-fail tests.
 
-        In a production context:
+In a production context:
 
 1. Initial failures would be logged as defects (e.g. Jira).
 2. Once accepted, tests would be marked xfail until fixed.
@@ -161,12 +161,12 @@ These known issues are handled with **pytest xfail markers** to prevent false pi
 
 ### Allure Reporting
 
-        Each test automatically attaches:
+Each test automatically attaches:
 
 - A screenshot of the browser  
 - The full HTML page source  
 
-        Attachments appear in Allure for all failed, xfailed, or xpassed tests.
+Attachments appear in Allure for all failed, xfailed, or xpassed tests.
 
 ### Generating and Viewing Reports
 
@@ -179,19 +179,19 @@ pytest -m regression --alluredir=reports/allure-results
 Generate an HTML report:
 
 ```bash
-        allure generate reports/allure-results -o reports/allure-report --clean
+allure generate reports/allure-results -o reports/allure-report --clean
 ```
 
 Optionally generate timestamped reports:
 
 ```bash
-        allure generate reports/allure-results -o reports/allure-report-2025-11-04_14-23 --clean
+allure generate reports/allure-results -o reports/allure-report-2025-11-04_14-23 --clean
 ```
 
 Open the report:
 
 ```bash
-        allure open reports/allure-report
+allure open reports/allure-report
 ```
 
 The Allure overview includes:
@@ -221,13 +221,13 @@ The Trend and Executors sections remain blank for local runs because they requir
 - Import sorters (isort)  
 - Pytest defaults and coverage settings  
 
-        Including this file helps standardise the environment and ensures future scalability.
+Including this file helps standardise the environment and ensures future scalability.
 
 ## CI/CD Integration
 
 The `.github/workflows/` directory contains a GitHub Actions workflow to execute tests automatically on push or pull requests.
 
-    Example workflow snippet:
+Example workflow snippet:
 
 ```yaml
 name: CI
@@ -291,9 +291,9 @@ This workflow installs dependencies, runs all tests, generates an Allure report,
 ## BDD
 
 This project does not include BDD-style tests.
-        Given the calculator’s simple design and focus on data variation rather than business workflow, a data-driven approach is more efficient.
+Given the calculator’s simple design and focus on data variation rather than business workflow, a data-driven approach is more efficient.
 
-        If stakeholder-readable tests become a requirement, BDD tools such as `pytest-bdd` or `behave` can be integrated easily — the existing Page Object structure already supports this.
+If stakeholder-readable tests become a requirement, BDD tools such as `pytest-bdd` or `behave` can be integrated easily — the existing Page Object structure already supports this.
 
 ## Summary
 
@@ -305,7 +305,7 @@ This framework demonstrates:
 - CI/CD integration and maintainability  
 - Clear defect tracking via xfail and visual artefacts  
 
-        It provides a solid foundation for scalable regression automation and transparent quality reporting.
+  It provides a solid foundation for scalable regression automation and transparent quality reporting.
 
 ---
 
