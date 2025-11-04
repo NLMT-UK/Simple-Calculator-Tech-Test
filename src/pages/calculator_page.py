@@ -17,11 +17,9 @@ class CalculatorPage:
     """
     Page Object for the TestSheepNZ Basic Calculator.
 
-    This page is intentionally unstable across builds (0–9), so this
-    object is defensive:
-      - detects when key controls are missing,
-      - reads results from the normal answer field or from page text,
-      - captures alert text when the app triggers a JS alert.
+    The calculator has multiple builds (0–9) and some of them are incomplete or buggy.
+    This object is defensive and tries to read results even when the normal answer
+    field disappears or an alert is shown.
     """
 
     URL: str | None = None  # set by the test fixture when calling .open(...)
@@ -40,9 +38,9 @@ class CalculatorPage:
 
     def __init__(self, driver: WebDriver) -> None:
         self.driver = driver
-        self._last_alert_text: str | None = None  # stores alert text if any appear
+        self._last_alert_text: str | None = None
 
-    # Navigation #
+    # Navigation
     def open(self, base_url: str) -> "CalculatorPage":
         """
         Open the calculator page and wait until it is ready.
@@ -56,23 +54,23 @@ class CalculatorPage:
         wait_visible(self.driver, self.SELECT_BUILD)
         return self
 
-    # Helpers #
-    def is_calculator_complete(self) -> bool:
+    # Helpers
+    def is_calculator_complete(self, timeout: int = 2) -> bool:
         """
         Return False if any essential inputs/buttons are missing (e.g. build 9).
-        Allows tests to xfail early instead of failing on missing elements.
+        Uses a short wait so we do not fail on slow render.
         """
         try:
-            self.driver.find_element(*self.NUMBER1)
-            self.driver.find_element(*self.NUMBER2)
-            self.driver.find_element(*self.CALCULATE)
+            wait = WebDriverWait(self.driver, timeout)
+            wait.until(EC.presence_of_element_located(self.NUMBER1))
+            wait.until(EC.presence_of_element_located(self.NUMBER2))
+            wait.until(EC.presence_of_element_located(self.CALCULATE))
             return True
-        except NoSuchElementException:
+        except TimeoutException:
             return False
 
     # Interactions
     def choose_build(self, build_value: int | str) -> "CalculatorPage":
-        """Select a calculator build from the dropdown."""
         select = Select(wait_visible(self.driver, self.SELECT_BUILD))
         select.select_by_value(str(build_value))
         return self
@@ -95,12 +93,7 @@ class CalculatorPage:
     def choose_operation(self, op_value: int | str) -> "CalculatorPage":
         """
         Select an operation.
-        Operation mapping:
-            0 = Add
-            1 = Subtract
-            2 = Multiply
-            3 = Divide
-            4 = Concatenate
+        0 = Add, 1 = Subtract, 2 = Multiply, 3 = Divide, 4 = Concatenate.
         """
         select = Select(wait_visible(self.driver, self.OPERATION))
         select.select_by_value(str(op_value))
@@ -134,7 +127,7 @@ class CalculatorPage:
 
         return self
 
-    # Result Accessors
+    # Result accessors
     def read_answer(self) -> str:
         """
         Return the calculator output text.

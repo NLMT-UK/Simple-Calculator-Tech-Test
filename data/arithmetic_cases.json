@@ -1,10 +1,100 @@
 [
-  { "op": 0, "a": "13", "b": "2", "expected": "15", "desc": "add positives" },
-  { "op": 1, "a": "13", "b": "2", "expected": "11", "desc": "subtract positives" },
-  { "op": 2, "a": "13", "b": "2", "expected": "26", "desc": "multiply positives" },
-  { "op": 3, "a": "10", "b": "4", "expected": "2.5", "desc": "divide to decimal" },
-  { "op": 4, "a": "foo", "b": "bar", "expected": "foobar", "desc": "concatenate" },
-  { "op": 0, "a": "-5", "b": "10", "expected": "5", "desc": "add negative to positive" },
-  { "op": 2, "a": "0", "b": "9999", "expected": "0", "desc": "multiply by zero" },
-  { "op": 3, "a": "9", "b": "3", "expected": "3", "desc": "clean divide" }
+  {
+    "desc": "add float and integer",
+    "op": 0,
+    "a": "1.5",
+    "b": "2",
+    "expected": "3.5"
+  },
+  {
+    "desc": "add floats",
+    "op": 0,
+    "a": "2.5",
+    "b": "3.2",
+    "expected": "5.7"
+  },
+  {
+    "desc": "add negatives",
+    "op": 0,
+    "a": "-5",
+    "b": "10",
+    "expected": "5"
+  },
+  {
+    "desc": "add positives",
+    "op": 0,
+    "a": "13",
+    "b": "2",
+    "expected": "15"
+  },
+  {
+    "desc": "clean divide",
+    "op": 3,
+    "a": "9",
+    "b": "3",
+    "expected": "3"
+  },
+  {
+    "desc": "concatenate",
+    "op": 4,
+    "a": "foo",
+    "b": "bar",
+    "expected": "foobar"
+  },
+  {
+    "desc": "divide floats",
+    "op": 3,
+    "a": "7.5",
+    "b": "2.5",
+    "expected": "3"
+  },
+  {
+    "desc": "divide to decimal",
+    "op": 3,
+    "a": "10",
+    "b": "4",
+    "expected": "2.5"
+  },
+  {
+    "desc": "multiply float and integer",
+    "op": 2,
+    "a": "2.5",
+    "b": "4",
+    "expected": "10"
+  },
+  {
+    "desc": "multiply floats",
+    "op": 2,
+    "a": "1.5",
+    "b": "2.0",
+    "expected": "3"
+  },
+  {
+    "desc": "multiply positives",
+    "op": 2,
+    "a": "13",
+    "b": "2",
+    "expected": "26"
+  },
+  {
+    "desc": "multiply by zero",
+    "op": 2,
+    "a": "0",
+    "b": "9999",
+    "expected": "0"
+  },
+  {
+    "desc": "subtract floats",
+    "op": 1,
+    "a": "10.5",
+    "b": "4.2",
+    "expected": "6.3"
+  },
+  {
+    "desc": "subtract positives",
+    "op": 1,
+    "a": "13",
+    "b": "2",
+    "expected": "11"
+  }
 ]
