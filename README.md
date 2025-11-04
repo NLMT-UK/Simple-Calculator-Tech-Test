@@ -14,7 +14,7 @@ The framework focuses on:
 - Scalability and CI/CD readiness  
 
 This repository excludes virtual environments and generated Allure reports via `.gitignore`.
-        After cloning, create and activate a virtual environment, then install dependencies:
+After cloning, create and activate a virtual environment, then install dependencies:
 
 ```bash
 python -m venv .venv
@@ -63,6 +63,64 @@ pip install -r requirements.txt
 
 ## Running the Full Test Suite
 
+### Prerequisites (Ubuntu/Linux-based systems)
+
+This project uses Selenium and requires a web browser (Chrome/Chromium or Firefox) and the Allure CLI for reporting.
+
+#### 1. Install a browser
+
+You can use either Chrome or Firefox. Chrome is the default unless overridden with `BROWSER=firefox`.
+
+**Option A – Google Chrome (recommended):**
+```bash
+sudo apt update
+wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+sudo apt install -y ./google-chrome-stable_current_amd64.deb
+```
+**Option B - Chromium (open-source equivalent):**
+```bash
+sudo apt install -y chromium-browser
+```
+
+**Option C - Firefox:**
+```bash
+sudo apt install -y firefox
+export BROWSER=firefox
+```
+#### 2. Install the Allure CLI
+
+Allure reports require the Allure Command Line interface (CLI) to generate and open the HTML report.
+
+**Recommended (Snap installation):**
+```bash
+sudo snap install allure --classic
+```
+
+**If you don’t use Snap, you can also download and install manually:**
+```bash
+wget https://github.com/allure-framework/allure2/releases/latest/download/allure-2.30.0.tgz
+sudo tar -zxvf allure-2.30.0.tgz -C /opt/
+sudo ln -s /opt/allure-2.30.0/bin/allure /usr/bin/allure
+```
+
+Once this is complete, follow the below step to create and activate a virtual environment.
+
+### Virtual environment and dependencies
+
+Both scripts attempt to activate a `.venv` directory (if present) and install dependencies from `requirements.txt`.
+If you prefer to manage environments manually:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+This ensures the test environment is reproducible on any system.
+
+
+### Execution
+
 Two scripts are provided for running the full regression suite end-to-end:
 
 - `run_all_tests.sh` – for macOS/Linux  
@@ -92,19 +150,6 @@ python run_all_tests.py
 ```
 
 This is useful on Windows or in CI environments where shell execution may not be supported.
-
-### Virtual environment and dependencies
-
-Both scripts attempt to activate a `.venv` directory (if present) and install dependencies from `requirements.txt`.
-        If you prefer to manage environments manually:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
-
-This ensures the test environment is reproducible on any system.
 
 ## Framework Design and Architecture
 
