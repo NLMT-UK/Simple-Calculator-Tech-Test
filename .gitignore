@@ -1,0 +1,33 @@
+# Python bytecode/caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# OS junk
+.DS_Store
+
+# IDE/editor settings
+.vscode/
+.idea/
+
+# Allure output (generated, not source)
+reports/allure-results/
+reports/allure-report*/
+reports/screenshots/
+
+# Selenium/webdriver downloads (if they end up in repo dir)
+*.log
+
+# Coverage/test artifacts
+htmlcov/
+.coverage
+coverage.xml

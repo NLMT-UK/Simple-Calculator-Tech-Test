@@ -1,0 +1,9 @@
+build,op,a,b,integer_only,expected,notes
+0,3,1,0,false,Infinity|Divide by 0 error,division by zero behaviour varies by build
+0,0,-5,7,false,2,negative + positive
+0,1,-5,-7,false,2,subtract negatives
+0,2,1e6,1e6,false,1e12,large numbers
+0,3,7,3,true,2,integer rounding (floors?)
+0,3,7,2,false,3.5,non-terminating decimal displays
+0,4,foo,bar,false,foobar,concatenate non-numeric
+0,0,abc,2,false,Error|Please enter a number,input validation message varies

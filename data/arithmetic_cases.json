@@ -1,0 +1,10 @@
+[
+  { "op": 0, "a": "13", "b": "2", "expected": "15", "desc": "add positives" },
+  { "op": 1, "a": "13", "b": "2", "expected": "11", "desc": "subtract positives" },
+  { "op": 2, "a": "13", "b": "2", "expected": "26", "desc": "multiply positives" },
+  { "op": 3, "a": "10", "b": "4", "expected": "2.5", "desc": "divide to decimal" },
+  { "op": 4, "a": "foo", "b": "bar", "expected": "foobar", "desc": "concatenate" },
+  { "op": 0, "a": "-5", "b": "10", "expected": "5", "desc": "add negative to positive" },
+  { "op": 2, "a": "0", "b": "9999", "expected": "0", "desc": "multiply by zero" },
+  { "op": 3, "a": "9", "b": "3", "expected": "3", "desc": "clean divide" }
+]
