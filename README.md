@@ -158,6 +158,31 @@ python run_all_tests.py
 
 This is useful on Windows or in CI environments where shell execution may not be supported.
 
+## Running Specific Test Groups
+
+The framework uses pytest markers to organise tests into logical groups.
+You can run any subset of tests using the `-m` flag.
+
+| Test Group | Description                                                              | Example Command                                           |
+|------------|--------------------------------------------------------------------------|-----------------------------------------------------------|
+| Smoke      | Quick checks to confirm the calculator loads and basic functions work    | `pytest -m smoke --alluredir=reports/allure-results`      |
+| Regression | Full arithmetic coverage across all builds using data-driven JSON cases  | `pytest -m regression --alluredir=reports/allure-results` |
+| Validation | Edge cases such as divide-by-zero, large numbers, and invalid inputs     | `pytest -m validation --alluredir=reports/allure-results` |
+| Build      | Build-level consistency checks (e.g. integer-only toggle, concatenation) | `pytest -m build --alluredir=reports/allure-results`      |
+
+Each command will:
+
+- Run only the specified test group.
+- Output Allure results to reports/allure-results/.
+- Allow subsequent report generation with: `allure generate reports/allure-results -o reports/allure-report --clean`
+
+For example, to run just the edge-case validation suite and immediately open the report:
+```bash
+pytest -m validation --alluredir=reports/allure-results
+allure generate reports/allure-results -o reports/allure-report --clean
+allure open reports/allure-report
+```
+
 ## Framework Design and Architecture
 
 ### Page Object Model (POM)
