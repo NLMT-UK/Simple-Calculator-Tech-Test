@@ -48,9 +48,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y default-jre
-          curl -o allure.tgz -L https://github.com/allure-framework/allure2/releases/latest/download/allure-2.29.0.tgz
+          curl -L -o allure.tgz https://github.com/allure-framework/allure2/releases/download/2.29.0/allure-2.29.0.tgz
           sudo tar -zxvf allure.tgz -C /opt/
           sudo ln -s /opt/allure-2.29.0/bin/allure /usr/bin/allure
+
 
       - name: Generate Allure HTML report
         if: always()
